@@ -59,6 +59,11 @@ async function startSniper() {
 
     const provider = new ethers.providers.WebSocketProvider(WSS_URL);
     const factoryContract = new ethers.Contract(UNISWAP_FACTORY_ADDRESS, FACTORY_ABI, provider);
+    
+    // HEARTBEAT: Listen for new blocks to prove connection is alive
+    provider.on("block", (blockNumber) => {
+        console.log(chalk.gray(`[Heartbeat] New Block Mined: ${blockNumber} (Waiting for pairs...)`));
+    });
 
     factoryContract.on("PairCreated", async (token0, token1, pairAddress) => {
         let targetTokenAddress = "";
